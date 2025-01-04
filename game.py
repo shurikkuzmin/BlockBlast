@@ -22,6 +22,9 @@ screen_width = (size_columns + 2) * box_size
 screen_height = (size_rows + 7) * box_size
 screen = pygame.display.set_mode((screen_width, screen_height))
 
+background = pygame.image.load("background.jpg")
+background = pygame.transform.scale(background, (screen_width, screen_height))
+
 field = numpy.zeros((size_rows,size_columns), dtype=int)
 
 # for row in range(size_rows):
@@ -31,6 +34,8 @@ field = numpy.zeros((size_rows,size_columns), dtype=int)
 def draw(field):
     offset_x = box_size
     offset_y = 2*box_size
+    pygame.draw.rect(screen,(0,0,0,100),(offset_x, offset_y, 
+    size_columns*box_size, size_rows*box_size))
     for row in range(size_rows):
         for column in range(size_columns):
             if field[row][column] == 0:
@@ -59,7 +64,8 @@ def draw(field):
 
 while True:
     clock.tick(fps)
-    screen.fill((0,0,0))
+    #screen.fill((0,0,0))
+    screen.blit(background,(0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
