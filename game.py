@@ -27,6 +27,31 @@ background = pygame.transform.scale(background, (screen_width, screen_height))
 
 field = numpy.zeros((size_rows,size_columns), dtype=int)
 
+figures = [
+    #  00
+    #  00
+    [[-1,-1],[-1,0],
+     [ 0,-1],[ 0,0]],
+    #  000
+    #  000
+    #  000
+    [[-1,-1],[-1,0],[-1,1],
+     [ 0,-1],[ 0,0],[ 0,1],
+     [ 1,-1],[ 1,0],[ 1,1]],
+    #  00
+    #  0
+    [[-1,-1],[-1,0],[0,-1]],
+    #  00
+    #   0
+    [[-1,0],[-1,1],[0,1]],
+    #  0
+    #  00
+    [[0,-1],[1,-1],[1,0]],
+    #   0
+    #  00
+    [[0,1],[1,0],[1,1]]
+]
+
 # for row in range(size_rows):
 #    for column in range(size_columns):
 #        field[row][column] = random.randint(1,5)
@@ -61,6 +86,14 @@ def draw(field):
             pygame.draw.rect(screen, (255, 255, 255), (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), 1)
 
+def draw_figures():
+    # Center figure
+    center_index = random.randint(0, 5)
+    center_figure = figures[center_index]
+
+    
+    for cell in center_figure:
+        print(cell)
 
 while True:
     clock.tick(fps)
@@ -72,4 +105,5 @@ while True:
             exit(0)
 
     draw(field)
+    draw_figures()
     pygame.display.update()
