@@ -86,14 +86,34 @@ def draw(field):
             pygame.draw.rect(screen, (255, 255, 255), (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), 1)
 
-def draw_figures():
-    # Center figure
-    center_index = random.randint(0, 5)
-    center_figure = figures[center_index]
+center_index = random.randint(0, 5)
+center_figure = figures[center_index]
 
-    
-    for cell in center_figure:
-        print(cell)
+left_index = random.randint(0, 5)
+left_figure = figures[left_index]
+
+random_figures =[center_figure, left_figure]
+
+def draw_figures():
+    random_centers = [((1+size_columns/2)*box_size,
+                        int((2+size_rows+2.5)*box_size)), 
+                       (int(2.5*box_size),
+                        int((2+size_rows+2.5)*box_size))]
+
+    for i in range(2):
+        figure = random_figures[i]
+        figure_image = pygame.Surface((3*box_size,3*box_size))
+        figure_rectangle = pygame.Rect(0,0,3*box_size,3*box_size)
+        figure_rectangle.center = random_centers[i]
+
+        for cell in figure:
+            x = cell[1]
+            y = cell[0]
+            pygame.draw.rect(figure_image,(255,255,255),
+            ((1+x)*box_size,(1+y)*box_size,box_size,box_size))
+
+        screen.blit(figure_image, figure_rectangle)
+    #    print(cell)
 
 while True:
     clock.tick(fps)
