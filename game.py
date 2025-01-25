@@ -5,11 +5,14 @@ import pygame.draw
 import random
 
 # Color codes
+# 0 - Black
 # 1 - Red
 # 2 - Green
 # 3 - Blue
 # 4 - Orange
 # 5 - Violet
+
+colors = [(0,0,0),(255,0,0),(0,255,0),(0,0,255),(255, 125, 0),(238, 130, 238)]
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -61,46 +64,35 @@ def draw(field):
     offset_y = 2*box_size
     pygame.draw.rect(screen,(0,0,0,100),(offset_x, offset_y, 
     size_columns*box_size, size_rows*box_size))
+    
     for row in range(size_rows):
         for column in range(size_columns):
             if field[row][column] == 0:
-                color = (255, 255, 255)
                 thickness = 1
-            if field[row][column] == 1:
-                color = (255, 0, 0)
+            else:
                 thickness = 0
-            if field[row][column] == 2:
-                color = (0, 255, 0)
-                thickness = 0
-            if field[row][column] == 3:
-                color = (0, 0, 255)
-                thickness = 0
-            if field[row][column] == 4:
-                color = (255, 125, 0)
-                thickness = 0
-            if field[row][column] == 5:
-                color = (238, 130, 238)
-                thickness = 0
+            color = colors[field[row][column]]
             pygame.draw.rect(screen, color, (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), thickness)
             pygame.draw.rect(screen, (255, 255, 255), (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), 1)
 
-center_index = random.randint(0, 5)
-center_figure = figures[center_index]
-
-left_index = random.randint(0, 5)
-left_figure = figures[left_index]
-
-random_figures =[center_figure, left_figure]
+random_figures = []
+random_centers = []
+random_colors = []
+offset = 4*box_size
+for i in range(3):
+    random_index = random.randint(0,5)
+    random_figure = figures[random_index]
+    random_color = random.randint(1,len(colors)-1)
+    random_colors.append(random_color)
+    random_figures.append(random_figure)
+    y = int((2+size_rows+2.5)*box_size)
+    x = (1+size_columns/2)*box_size + (i - 1)*offset
+    random_centers.append((x,y))
 
 def draw_figures():
-    random_centers = [((1+size_columns/2)*box_size,
-                        int((2+size_rows+2.5)*box_size)), 
-                       (int(2.5*box_size),
-                        int((2+size_rows+2.5)*box_size))]
-
-    for i in range(2):
+    for i in range(3):
         figure = random_figures[i]
         figure_image = pygame.Surface((3*box_size,3*box_size))
         figure_rectangle = pygame.Rect(0,0,3*box_size,3*box_size)
@@ -109,7 +101,7 @@ def draw_figures():
         for cell in figure:
             x = cell[1]
             y = cell[0]
-            pygame.draw.rect(figure_image,(255,255,255),
+            pygame.draw.rect(figure_image,colors[random_colors[i]],
             ((1+x)*box_size,(1+y)*box_size,box_size,box_size))
 
         screen.blit(figure_image, figure_rectangle)
