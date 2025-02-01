@@ -52,8 +52,66 @@ figures = [
     [[0,-1],[1,-1],[1,0]],
     #   0
     #  00
-    [[0,1],[1,0],[1,1]]
+    [[0,1],[1,0],[1,1]],
+    # 000 
+    #  0
+    #  0
+    [[-1,-1],[-1,0],[-1,1],[0,0],[1,0]],
+    #  0
+    #  0
+    # 000
+    [[-1,0],[0,0],[1,-1],[1,0],[1,1]],
+    # 0
+    # 000
+    # 0
+    [[-1,-1],[0,-1],[1,-1],[0,0],[0,1]],
+    #   0
+    # 000
+    #   0
+    [[0,-1],[0,0],[0,1],[-1,1],[1,1]],
+    #
+    #000
+    #
+    [[0,-1],[0,0],[0,1]],
+    #  0
+    #  0
+    #  0
+    [[-1,0],[0,0],[1,0]],
+    #  00
+    # 00
+    #
+    [[0,-1],[0,0],[-1,0],[-1,1]],
+    # 0
+    # 00
+    #  0
+    [[-1,-1],[0,-1],[0,0],[1,0]],
+    # 
+    # 00
+    #  00
+    [[0,-1],[0,0],[1,0],[1,1]],
+    #  0
+    # 00
+    # 0
+    [[1,-1],[0,-1],[0,0],[1,0]],
+    # 000
+    # 0
+    # 0
+    [[-1,-1],[-1,0],[-1,1],[0,-1],[1,-1]],
+    # 000
+    #   0
+    #   0
+    [[-1,-1],[-1,0],[-1,1],[0,1],[1,1]],
+    #   0
+    #   0
+    # 000
+    [[-1,1],[0,1],[-1,1],[0,1],[1,1]],
+    # 0
+    # 0
+    # 000
+    [[-1,-1],[0,-1],[-1,1],[0,1],[1,1]],
+
 ]
+num_figures = len(figures)
 
 # for row in range(size_rows):
 #    for column in range(size_columns):
@@ -79,13 +137,12 @@ def draw(field):
 
 random_figures = []
 random_centers = []
-random_colors = []
+random_colors = random.sample(range(1,len(colors)),3)
+random_indices = random.sample(range(num_figures),3)
 offset = 4*box_size
 for i in range(3):
-    random_index = random.randint(0,5)
+    random_index = random_indices[i]
     random_figure = figures[random_index]
-    random_color = random.randint(1,len(colors)-1)
-    random_colors.append(random_color)
     random_figures.append(random_figure)
     y = int((2+size_rows+2.5)*box_size)
     x = (1+size_columns/2)*box_size + (i - 1)*offset
