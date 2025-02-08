@@ -137,6 +137,8 @@ def draw(field):
 
 random_figures = []
 random_centers = []
+random_rectangles = []
+picked_figure = -1
 random_colors = random.sample(range(1,len(colors)),3)
 random_indices = random.sample(range(num_figures),3)
 offset = 4*box_size
@@ -154,6 +156,7 @@ def draw_figures():
         figure_image = pygame.Surface((3*box_size,3*box_size))
         figure_rectangle = pygame.Rect(0,0,3*box_size,3*box_size)
         figure_rectangle.center = random_centers[i]
+        random_rectangles.append(figure_rectangle)
 
         for cell in figure:
             x = cell[1]
@@ -164,6 +167,28 @@ def draw_figures():
         screen.blit(figure_image, figure_rectangle)
     #    print(cell)
 
+def draw_picked_figure():
+    if picked_figure == -1:
+        return
+    print(picked_figure)
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    print(mouse_x, mouse_y)
+    for cell in random_figures[picked_figure]:
+        x = cell[1]
+        y = cell[0]
+        little_rect = pygame.Rect((0,0,box_size,box_size))
+        little_rect.centerx = mouse_x + x * box_size
+        little_rect.centery = mouse_y + y * box_size
+        pygame.draw.rect(screen,colors[random_colors[i]],little_rect)
+
+
+def determine_figure():
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    for i in range(3):
+        if random_rectangles[i].collidepoint((mouse_x, mouse_y)):
+            return i
+
 while True:
     clock.tick(fps)
     #screen.fill((0,0,0))
@@ -172,7 +197,12 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit(0)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                picked_figure = determine_figure() 
 
+    print(picked_figure)
     draw(field)
     draw_figures()
+    draw_picked_figure()
     pygame.display.update()
