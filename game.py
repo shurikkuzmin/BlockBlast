@@ -104,18 +104,20 @@ figures = [
     #   0
     #   0
     # 000
-    [[-1,1],[0,1],[-1,1],[0,1],[1,1]],
+    [[-1,1],[0,1],[1,1],[1,-1],[1,0]],
     # 0
     # 0
     # 000
-    [[-1,-1],[0,-1],[-1,1],[0,1],[1,1]],
-
+    [[-1,-1],[0,-1],[1,-1],[1,0],[1,1]],
 ]
 num_figures = len(figures)
 
-# for row in range(size_rows):
-#    for column in range(size_columns):
-#        field[row][column] = random.randint(1,5)
+random_figures = []
+random_centers = []
+random_rectangles = []
+picked_figure = -1
+random_colors = random.sample(range(1,len(colors)),3)
+random_indices = random.sample(range(num_figures),3)
 
 def draw(field):
     offset_x = box_size
@@ -123,6 +125,26 @@ def draw(field):
     pygame.draw.rect(screen,(0,0,0,100),(offset_x, offset_y, 
     size_columns*box_size, size_rows*box_size))
     
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    delta_x = mouse_x - offset_x
+    delta_y = mouse_y - offset_y
+    if delta_x < 0 or delta_x > size_columns * box_size or\
+       delta_y < 0 or delta_y > size_rows * box_size:
+       ind_x = -1
+       ind_y = -1
+    else:
+        ind_x = int((mouse_x - offset_x) / box_size)
+        ind_y = int((mouse_y - offset_y) / box_size)
+     
+    if ind_x != -1 and ind_y != -1:
+        if picked_figure != -1:
+            for cell in random_figures[picked_figure]:
+                x = ind_x + cell[1]
+                y = ind_y + cell[0]
+                #if x < 0 or x > size_columns:
+        pygame.draw.rect(screen, (255, 182, 193), (ind_x*box_size + offset_x, 
+            ind_y*box_size + offset_y,box_size,box_size))
+
     for row in range(size_rows):
         for column in range(size_columns):
             if field[row][column] == 0:
@@ -135,12 +157,6 @@ def draw(field):
             pygame.draw.rect(screen, (255, 255, 255), (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), 1)
 
-random_figures = []
-random_centers = []
-random_rectangles = []
-picked_figure = -1
-random_colors = random.sample(range(1,len(colors)),3)
-random_indices = random.sample(range(num_figures),3)
 offset = 4*box_size
 for i in range(3):
     random_index = random_indices[i]
@@ -170,17 +186,15 @@ def draw_figures():
 def draw_picked_figure():
     if picked_figure == -1:
         return
-    print(picked_figure)
 
     mouse_x, mouse_y = pygame.mouse.get_pos()
-    print(mouse_x, mouse_y)
     for cell in random_figures[picked_figure]:
         x = cell[1]
         y = cell[0]
         little_rect = pygame.Rect((0,0,box_size,box_size))
         little_rect.centerx = mouse_x + x * box_size
         little_rect.centery = mouse_y + y * box_size
-        pygame.draw.rect(screen,colors[random_colors[i]],little_rect)
+        pygame.draw.rect(screen,colors[random_colors[picked_figure]],little_rect)
 
 
 def determine_figure():
@@ -188,6 +202,7 @@ def determine_figure():
     for i in range(3):
         if random_rectangles[i].collidepoint((mouse_x, mouse_y)):
             return i
+    return -1
 
 while True:
     clock.tick(fps)
@@ -201,7 +216,9 @@ while True:
             if event.button == 1:
                 picked_figure = determine_figure() 
 
-    print(picked_figure)
+        if event.type == pygame.MOUSEBUTTONUP:
+            picked_figure = -1
+
     draw(field)
     draw_figures()
     draw_picked_figure()
