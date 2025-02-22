@@ -116,15 +116,14 @@ random_figures = []
 random_centers = []
 random_rectangles = []
 picked_figure = -1
+picked_fit = False
 random_colors = random.sample(range(1,len(colors)),3)
 random_indices = random.sample(range(num_figures),3)
 
-def draw(field):
+
+def draw_fit_figure(put_figure):
     offset_x = box_size
     offset_y = 2*box_size
-    pygame.draw.rect(screen,(0,0,0,100),(offset_x, offset_y, 
-    size_columns*box_size, size_rows*box_size))
-    
     mouse_x, mouse_y = pygame.mouse.get_pos()
     delta_x = mouse_x - offset_x
     delta_y = mouse_y - offset_y
@@ -135,16 +134,52 @@ def draw(field):
     else:
         ind_x = int((mouse_x - offset_x) / box_size)
         ind_y = int((mouse_y - offset_y) / box_size)
-     
+        if ind_x > size_columns - 1:
+            ind_x = size_columns -1
+        if ind_y > size_rows - 1:
+            ind_y = size_rows -1
     if ind_x != -1 and ind_y != -1:
         if picked_figure != -1:
+            picked_fit = True
             for cell in random_figures[picked_figure]:
                 x = ind_x + cell[1]
                 y = ind_y + cell[0]
-                #if x < 0 or x > size_columns:
-        pygame.draw.rect(screen, (255, 182, 193), (ind_x*box_size + offset_x, 
-            ind_y*box_size + offset_y,box_size,box_size))
+                if x < 0 or x > size_columns - 1:
+                    picked_fit = False
+                    continue
+                if y < 0 or y > size_rows - 1:
+                    picked_fit = False
+                    continue
+                if field[y][x] != 0:
+                    picked_fit = False
+                    continue
 
+            for cell in random_figures[picked_figure]:
+                x = ind_x + cell[1]
+                y = ind_y + cell[0]
+                if x < 0 or x > size_columns - 1:
+                    continue
+                if y < 0 or y > size_rows - 1:
+                    continue
+                if field[y][x] != 0:
+                    continue
+                if picked_fit:
+                    if put_figure:
+                        field[y][x] = random_colors[picked_figure]
+                    pygame.draw.rect(screen, (152, 251, 152), (x*box_size + offset_x, 
+                    y*box_size + offset_y,box_size,box_size))    
+                else:
+                    pygame.draw.rect(screen, (255, 182, 193), (x*box_size + offset_x, 
+                    y*box_size + offset_y,box_size,box_size))
+
+
+def draw(field):
+    #global picked_fit
+    offset_x = box_size
+    offset_y = 2*box_size
+    pygame.draw.rect(screen,(0,0,0,100),(offset_x, offset_y, 
+    size_columns*box_size, size_rows*box_size))
+    
     for row in range(size_rows):
         for column in range(size_columns):
             if field[row][column] == 0:
@@ -217,9 +252,11 @@ while True:
                 picked_figure = determine_figure() 
 
         if event.type == pygame.MOUSEBUTTONUP:
+            draw_fit_figure(True)
             picked_figure = -1
 
     draw(field)
+    draw_fit_figure(False)
     draw_figures()
     draw_picked_figure()
     pygame.display.update()
