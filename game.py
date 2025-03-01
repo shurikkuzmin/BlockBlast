@@ -119,6 +119,17 @@ picked_figure = -1
 picked_fit = False
 random_colors = random.sample(range(1,len(colors)),3)
 random_indices = random.sample(range(num_figures),3)
+picked_indices = [-1, -1, -1]
+
+def check_picked_figures():
+    if len(picked_indices) == 3:
+        random_figures = []
+        random_colors = random.sample(range(1,len(colors)),3)
+        random_indices = random.sample(range(num_figures),3)
+        for i in range(3):
+            random_index = random_indices[i]
+            random_figure = figures[random_index]
+            random_figures.append(random_figure)
 
 
 def draw_fit_figure(put_figure):
@@ -166,13 +177,13 @@ def draw_fit_figure(put_figure):
                 if picked_fit:
                     if put_figure:
                         field[y][x] = random_colors[picked_figure]
+                        picked_indices[picked_figure] = picked_figure
                     pygame.draw.rect(screen, (152, 251, 152), (x*box_size + offset_x, 
                     y*box_size + offset_y,box_size,box_size))    
                 else:
                     pygame.draw.rect(screen, (255, 182, 193), (x*box_size + offset_x, 
                     y*box_size + offset_y,box_size,box_size))
-
-
+            
 def draw(field):
     #global picked_fit
     offset_x = box_size
@@ -203,6 +214,9 @@ for i in range(3):
 
 def draw_figures():
     for i in range(3):
+        if i in picked_indices:
+            continue
+
         figure = random_figures[i]
         figure_image = pygame.Surface((3*box_size,3*box_size))
         figure_rectangle = pygame.Rect(0,0,3*box_size,3*box_size)
@@ -235,6 +249,8 @@ def draw_picked_figure():
 def determine_figure():
     mouse_x, mouse_y = pygame.mouse.get_pos()
     for i in range(3):
+        if i in picked_indices:
+            continue
         if random_rectangles[i].collidepoint((mouse_x, mouse_y)):
             return i
     return -1
