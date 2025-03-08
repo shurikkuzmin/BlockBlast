@@ -217,7 +217,8 @@ def check_field():
     for i in rows:
         field[i][0:size_columns] = 0
     for j in columns:
-        field[0:size_rows][j] = 0
+        for i in range(size_rows):
+            field[i][j] = 0
 
 def draw(field):
     #global picked_fit
