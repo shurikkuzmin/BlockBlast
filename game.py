@@ -122,15 +122,19 @@ random_indices = random.sample(range(num_figures),3)
 picked_indices = [-1, -1, -1]
 
 def check_picked_figures():
-    if len(picked_indices) == 3:
-        random_figures = []
-        random_colors = random.sample(range(1,len(colors)),3)
-        random_indices = random.sample(range(num_figures),3)
-        for i in range(3):
-            random_index = random_indices[i]
-            random_figure = figures[random_index]
-            random_figures.append(random_figure)
+    for index in picked_indices:
+        if index == -1:
+            return
 
+    random_colors2 = random.sample(range(1,len(colors)),3)
+    random_indices2 = random.sample(range(num_figures),3)
+    
+    for i in range(3):
+        random_index = random_indices2[i]
+        random_figure = figures[random_index]
+        random_figures[i] = random_figure
+        random_colors[i] = random_colors2[i]
+        picked_indices[i] = -1
 
 def draw_fit_figure(put_figure):
     offset_x = box_size
@@ -178,12 +182,43 @@ def draw_fit_figure(put_figure):
                     if put_figure:
                         field[y][x] = random_colors[picked_figure]
                         picked_indices[picked_figure] = picked_figure
+                        
                     pygame.draw.rect(screen, (152, 251, 152), (x*box_size + offset_x, 
                     y*box_size + offset_y,box_size,box_size))    
                 else:
                     pygame.draw.rect(screen, (255, 182, 193), (x*box_size + offset_x, 
                     y*box_size + offset_y,box_size,box_size))
-            
+
+            if picked_fit and put_figure:
+                check_picked_figures()
+                check_field()
+def check_field():
+    rows = []
+    columns = []
+    
+    for i in range(size_rows):
+        delete_row = True
+        for j in range(size_columns):
+            if field[i][j] == 0:
+                delete_row = False
+                break
+        if delete_row:
+            rows.append(i)
+
+    for i in range(size_columns):
+        delete_column = True
+        for j in range(size_rows):
+            if field[j][i] == 0:
+                delete_column = False
+                break
+        if delete_column:
+            columns.append(i)
+    
+    for i in rows:
+        field[i][0:size_columns] = 0
+    for j in columns:
+        field[0:size_rows][j] = 0
+
 def draw(field):
     #global picked_fit
     offset_x = box_size
