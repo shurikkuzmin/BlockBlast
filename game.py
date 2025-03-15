@@ -155,19 +155,7 @@ def draw_fit_figure(put_figure):
             ind_y = size_rows -1
     if ind_x != -1 and ind_y != -1:
         if picked_figure != -1:
-            picked_fit = True
-            for cell in random_figures[picked_figure]:
-                x = ind_x + cell[1]
-                y = ind_y + cell[0]
-                if x < 0 or x > size_columns - 1:
-                    picked_fit = False
-                    continue
-                if y < 0 or y > size_rows - 1:
-                    picked_fit = False
-                    continue
-                if field[y][x] != 0:
-                    picked_fit = False
-                    continue
+            picked_fit = can_put_figure(picked_figure,ind_x,ind_y)
 
             for cell in random_figures[picked_figure]:
                 x = ind_x + cell[1]
@@ -192,6 +180,46 @@ def draw_fit_figure(put_figure):
             if picked_fit and put_figure:
                 check_picked_figures()
                 check_field()
+                return check_game_over()
+    return False
+
+def can_put_figure(picked_figure,ind_x,ind_y):
+    picked_fit = True
+    for cell in random_figures[picked_figure]:
+        x = ind_x + cell[1]
+        y = ind_y + cell[0]
+        if x < 0 or x > size_columns - 1:
+            picked_fit = False
+            continue
+        if y < 0 or y > size_rows - 1:
+            picked_fit = False
+            continue
+        if field[y][x] != 0:
+            picked_fit = False
+            continue
+    return picked_fit
+
+def check_game_over():
+    for index in range(3):
+        if picked_indices[index] != -1:
+            continue
+        
+        for row in range(size_rows):
+            for column in range(size_columns):
+                if field[row][column] > 0:
+                    continue
+                if can_put_figure(index, column, row):
+                    print(index, column, row)
+                    return False
+    print("Game over!!!!")
+    font = pygame.font.Font(None, 72)  # Use default font with size 72
+    text = font.render("Game Over", True, (255,0,0))  # Render text (anti-aliasing enabled)
+
+    # Get text rect and center it
+    text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2))
+    screen.blit(text, text_rect)
+    return True
+
 def check_field():
     rows = []
     columns = []
@@ -291,6 +319,7 @@ def determine_figure():
             return i
     return -1
 
+game_over = False
 while True:
     clock.tick(fps)
     #screen.fill((0,0,0))
@@ -304,8 +333,11 @@ while True:
                 picked_figure = determine_figure() 
 
         if event.type == pygame.MOUSEBUTTONUP:
-            draw_fit_figure(True)
+            game_over = draw_fit_figure(True)
             picked_figure = -1
+    if game_over:
+        pygame.display.update()
+        continue
 
     draw(field)
     draw_fit_figure(False)
