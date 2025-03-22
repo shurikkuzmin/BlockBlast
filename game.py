@@ -155,11 +155,9 @@ def find_put_cell():
             ind_y = size_rows -1
     return ind_x, ind_y
 
-def draw_possible_figure(ind_x, ind_y, picked_fit, put_figure):
-
+def draw_picked_figure(ind_x, ind_y, fit_figure, put_figure):
     offset_x = box_size
     offset_y = 2*box_size
-    
     for cell in random_figures[picked_figure]:
         x = ind_x + cell[1]
         y = ind_y + cell[0]
@@ -169,11 +167,7 @@ def draw_possible_figure(ind_x, ind_y, picked_fit, put_figure):
             continue
         if field[y][x] != 0:
             continue
-        if picked_fit:
-            if put_figure:
-                field[y][x] = random_colors[picked_figure]
-                picked_indices[picked_figure] = picked_figure
-                
+        if fit_figure:                
             pygame.draw.rect(screen, (152, 251, 152), (x*box_size + offset_x, 
             y*box_size + offset_y,box_size,box_size))    
         else:
@@ -197,31 +191,28 @@ def draw_fit_figure(put_figure):
     if picked_figure == -1:
         return False
 
-    picked_fit = can_put_figure(picked_figure,ind_x,ind_y)
+    fit_figure = can_fit_figure(picked_figure, ind_x, ind_y)
 
-    draw_possible_figure(ind_x, ind_y, picked_fit, put_figure)
+    draw_picked_figure(ind_x, ind_y, fit_figure, put_figure)
 
-    if picked_fit and put_figure:
+    if fit_figure and put_figure:
+        put_picked_figure(picked_figure, ind_x, ind_y)
         check_picked_figures()
         check_field()
         return check_game_over()
     return False
 
-def can_put_figure(picked_figure,ind_x,ind_y):
-    picked_fit = True
+def can_fit_figure(picked_figure,ind_x,ind_y):
     for cell in random_figures[picked_figure]:
         x = ind_x + cell[1]
         y = ind_y + cell[0]
         if x < 0 or x > size_columns - 1:
-            picked_fit = False
-            continue
+            return False
         if y < 0 or y > size_rows - 1:
-            picked_fit = False
-            continue
+            return False
         if field[y][x] != 0:
-            picked_fit = False
-            continue
-    return picked_fit
+            return False
+    return True
 
 def check_game_over():
     for index in range(3):
@@ -232,7 +223,7 @@ def check_game_over():
             for column in range(size_columns):
                 if field[row][column] > 0:
                     continue
-                if can_put_figure(index, column, row):
+                if can_fit_figure(index, column, row):
                     print(index, column, row)
                     return False
     print("Game over!!!!")
