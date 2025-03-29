@@ -230,7 +230,7 @@ def draw_game_over():
     if not game_over:
         return
 
-    font = pygame.font.Font(None, 72)  # Use default font with size 72
+    font = pygame.font.Font("Creepster-Regular.ttf", 150)  # Use default font with size 72
     text = font.render("Game Over", True, (255,0,0))  # Render text (anti-aliasing enabled)
 
     # Get text rect and center it
@@ -357,6 +357,7 @@ while True:
     draw_game_over()
 
     if game_over:
+        pygame.display.update()
         continue
 
     fit_figure = draw_fit_figure()
