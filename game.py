@@ -120,6 +120,7 @@ picked_fit = False
 random_colors = random.sample(range(1,len(colors)),3)
 random_indices = random.sample(range(num_figures),3)
 picked_indices = [-1, -1, -1]
+score = 0
 
 game_over = False
 
@@ -240,6 +241,7 @@ def draw_game_over():
 def check_field():
     rows = []
     columns = []
+    global score
     
     for i in range(size_rows):
         delete_row = True
@@ -261,9 +263,15 @@ def check_field():
     
     for i in rows:
         field[i][0:size_columns] = 0
+
     for j in columns:
         for i in range(size_rows):
             field[i][j] = 0
+
+    for i in range(len(rows)):
+        score = score + (i + 1) * size_rows
+    for j in range(len(columns)):
+        score = score + (j + 1 + len(rows)) * size_columns        
 
 def draw(field):
     #global picked_fit
@@ -283,6 +291,15 @@ def draw(field):
             row*box_size + offset_y,box_size,box_size), thickness)
             pygame.draw.rect(screen, (255, 255, 255), (column*box_size + offset_x, 
             row*box_size + offset_y,box_size,box_size), 1)
+
+def draw_score():
+    font = pygame.font.Font(None, 100)  # Use default font with size 72
+    text = font.render(str(score), True, (0,0,255))  # Render text (anti-aliasing enabled)
+
+    # Get text rect and center it
+    text_rect = text.get_rect(center=(screen_width // 2, 50))
+    screen.blit(text, text_rect)    
+
 
 offset = 4*box_size
 for i in range(3):
@@ -353,12 +370,14 @@ while True:
         if event.type == pygame.MOUSEBUTTONUP:
             mouse_button_up = True
 
-    draw(field)
+    draw_score()
     draw_game_over()
 
     if game_over:
         pygame.display.update()
         continue
+    
+    draw(field)
 
     fit_figure = draw_fit_figure()
 
